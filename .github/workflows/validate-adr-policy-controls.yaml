@@ -169,7 +169,7 @@ jobs:
     name: 🚀 Mark PR as Ready for Review
     runs-on: ubuntu-latest
     needs:
-      - Validate-terraform-deploymentarch
+      - Validate-adr-policy-control
       - Validate-terraform-Control
     if: ${{ github.event.pull_request.draft == true && github.head_ref == 'develop' }}
     steps:
