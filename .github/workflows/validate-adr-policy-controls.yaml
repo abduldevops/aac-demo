@@ -1,0 +1,184 @@
+name: Validate IaC and Mark PR Ready
+permissions:
+  contents: write
+  actions: write
+  id-token: write
+  
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
+    paths:
+      - infrastructure/**
+  workflow_dispatch:
+
+jobs:
+  Validate-terraform-deploymentarch:
+    name: ✅ IaC-DeploymentArchitecture Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Make script executable
+        run: chmod +x scripts/validate_iac_deployment_architecture.py
+
+      - name: Run validation script
+        env:
+          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+        run: python ./scripts/validate_iac_deployment_architecture.py
+
+      - name: 🐛 Debug – Print absolute path of generated report
+        if: always()
+        run: |
+          echo "Current working directory:"
+          pwd
+
+           echo "Check for IaC_DeploymentArchitecture_Compliance_Report.md from current dir:"
+           find . -name "IaC_DeploymentArchitecture_Compliance_Report.md" -print
+
+          echo "Full report path (if exists):"
+          find . -type f -name "IaC_DeploymentArchitecture_Compliance_Report.md" -exec realpath {} \; || echo "Report not found"
+
+          echo "Directory tree around compliance-reports:"
+          tree -L 2 || ls -R
+
+      - name: Debug – List report files
+        if: always()
+        run: ls -lR compliance-reports || echo "Listing files under compliance-reports"
+
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: policy-evaluation-report-deploymentarch
+          path: compliance-reports/IaC_DeploymentArchitecture_Compliance_Report.md
+
+     
+  Validate-terraform-Control:
+    name: ✅ IaC-Controls Compliance
+    runs-on: ubuntu-latest
+    needs: Validate-terraform-deploymentarch
+    if: always()
+
+    steps:
+        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Make script executable
+        run: chmod +x scripts/validate_IaC_controls.py
+
+      - name: Run validation script
+        env:
+          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+        run: python ./scripts/validate_IaC_controls.py
+
+      - name: Download architecture report artifact
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: policy-evaluation-report-deploymentarch
+          path: compliance-reports
+
+      - name: 🐛 Debug – Print absolute path of generated report
+        if: always()
+        run: |
+          echo "Current working directory:"
+          pwd
+
+          echo "Full report path (if exists):"
+          find . -type f -name "IaC_Control_Compliance_Report.md" -exec realpath {} \; || echo "Report not found"
+
+          echo "Directory tree around compliance-reports:"
+          tree -L 2 || ls -R
+
+      - name: Debug – List report files
+        if: always()
+        run: ls -lR compliance-reports || echo "Directory not found"
+
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: policy-evaluation-report-controls
+          path: compliance-reports/IaC_Control_Compliance_Report.md
+
+
+
+      - name: Commit and push reports
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          TIMESTAMP=$(date +"%d%m%y-%H%M%S")
+
+          echo "######Check for IaC_DeploymentArchitecture_Compliance_Report.md from current dir:#######"
+          find . -name "IaC_DeploymentArchitecture_Compliance_Report.md" -print
+          
+          echo "Full report paths (if exist):"
+          find . -type f -name "IaC_DeploymentArchitecture_Compliance_Report.md" -exec realpath {} \; || echo "IaC_DeploymentArchitecture_Compliance_Report.md not found"
+          find . -type f -name "IaC_Control_Compliance_Report.md" -exec realpath {} \; || echo "IaC_Control_Compliance_Report.md not found"
+
+          # Stage both reports if they exist
+          if [ -f compliance-reports/IaC_DeploymentArchitecture_Compliance_Report.md ]; then
+            mv compliance-reports/IaC_DeploymentArchitecture_Compliance_Report.md compliance-reports/IaC_DeploymentArchitecture_Compliance_Report_${TIMESTAMP}.md
+            git add compliance-reports/IaC_DeploymentArchitecture_Compliance_Report_${TIMESTAMP}.md
+          fi
+          if [ -f compliance-reports/IaC_Control_Compliance_Report.md ]; then
+            mv compliance-reports/IaC_Control_Compliance_Report.md compliance-reports/IaC_Control_Compliance_Report_${TIMESTAMP}.md
+            git add compliance-reports/IaC_Control_Compliance_Report_${TIMESTAMP}.md
+          fi
+
+          git commit -m "Update IaC compliance reports" || echo "No changes to commit"
+
+          # Push changes to the current branch
+          git push origin ${{ github.head_ref }} || echo "Push failed (possibly due to concurrent updates)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  mark-ready:
+    name: 🚀 Mark PR as Ready for Review
+    runs-on: ubuntu-latest
+    needs:
+      - Validate-terraform-deploymentarch
+      - Validate-terraform-Control
+    if: ${{ github.event.pull_request.draft == true && github.head_ref == 'develop' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.PAT_REPO_WRITE }}" | gh auth login --with-token
+
+      - name: Mark PR as Ready for Review
+        run: |
+          echo "Marking PR #${{ github.event.pull_request.number }} as ready for review..."
+          gh pr ready ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
