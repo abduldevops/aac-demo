@@ -73,7 +73,7 @@ jobs:
   Validate-terraform-Control:
     name: ✅ IaC-Controls Compliance
     runs-on: ubuntu-latest
-    needs: Validate-terraform-deploymentarch
+    needs: Validate-adr-policy-control
     if: always()
 
     steps:
