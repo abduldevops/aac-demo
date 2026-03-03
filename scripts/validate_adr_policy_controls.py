@@ -43,6 +43,7 @@ class ControlResult:
 FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
 def parse_adr(path: str) -> ADR:
+    print("in parse_adr")
     text = open(path, "r", encoding="utf-8").read()
     m = FRONT_MATTER_RE.match(text)
     if not m:
@@ -58,6 +59,7 @@ def parse_adr(path: str) -> ADR:
     )
 
 def load_adrs(adrs_dir="adrs") -> List[ADR]:
+    print("in load_adrs")
     paths = sorted(glob.glob(os.path.join(adrs_dir, "*.md")))
     return [parse_adr(p) for p in paths]
 
