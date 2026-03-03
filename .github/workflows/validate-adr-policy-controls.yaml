@@ -1,4 +1,4 @@
-name: Validate IaC and Mark PR Ready
+name: Validate adr policy control
 permissions:
   contents: write
   actions: write
@@ -15,8 +15,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Validate-terraform-deploymentarch:
-    name: ✅ IaC-DeploymentArchitecture Compliance
+  Validate-adr-policy-control:
+    name: ✅ Validate adr policy control Compliance
     runs-on: ubuntu-latest
 
     steps:
@@ -32,21 +32,22 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Make script executable
-        run: chmod +x scripts/validate_iac_deployment_architecture.py
+        run: chmod +x scripts/validate_adr_policy_controls.py
 
       - name: Run validation script
         env:
-          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
-          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
-          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
-        run: python ./scripts/validate_iac_deployment_architecture.py
+         # AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+         # AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+         # AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+         # OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+        run: python ./scripts/validate_adr_policy_controls.py
 
       - name: 🐛 Debug – Print absolute path of generated report
         if: always()
         run: |
           echo "Current working directory:"
           pwd
+          ls -la
 
            echo "Check for IaC_DeploymentArchitecture_Compliance_Report.md from current dir:"
            find . -name "IaC_DeploymentArchitecture_Compliance_Report.md" -print
