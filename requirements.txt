@@ -1,0 +1,7 @@
+langchain
+openai
+python-dotenv
+tqdm
+langchain-community
+langchain-openai
+colorama
