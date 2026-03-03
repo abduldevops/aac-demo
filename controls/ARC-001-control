@@ -1,0 +1,12 @@
+id: ARC-001
+title: DTOs must be used for all controller inputs/outputs
+description: Ensure controllers only accept DTOs as parameters.
+policy: ARC-001/src/test/java/com/mycompany/architecture/ARC-001Test.java
+input_source: compiled classes
+severity: high
+enforcement: hard
+stage: build
+tags:
+- architecture
+- archunit
+- java
