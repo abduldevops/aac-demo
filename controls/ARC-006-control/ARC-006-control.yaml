@@ -1,0 +1,13 @@
+id: ARC-006
+title: Each REST controller must be annotated with `@RequestMapping("/api/v1/...")`
+description: Enforce API versioning strategy by checking @RequestMapping paths on
+  controllers.
+policy: ARC-006/src/test/java/com/mycompany/architecture/ARC006Test.java
+input_source: compiled classes
+severity: high
+enforcement: hard
+stage: build
+tags:
+- architecture
+- api-versioning
+- controller
