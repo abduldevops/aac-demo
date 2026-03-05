@@ -58,7 +58,7 @@ def parse_adr(path: str) -> ADR:
         raw_markdown=text,
     )
 
-def load_adrs(adrs_dir="adrs") -> List[ADR]:
+def load_adrs(adrs_dir="adr") -> List[ADR]:
     print("in load_adrs")
     print(adrs_dir)
     paths = sorted(glob.glob(os.path.join(adrs_dir, "*.md")))
