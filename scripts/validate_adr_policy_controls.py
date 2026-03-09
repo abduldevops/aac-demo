@@ -53,6 +53,8 @@ def parse_adr(path: str) -> ADR:
     meta = yaml.safe_load(m.group(1)) or {}
     print("meta")
     print(meta)
+    print("in parse_adr")
+    print(meta.get("governance", {}))
     return ADR(
         path=path,
         adr_id=meta.get("adr_id") or os.path.basename(path).split("-")[0],
@@ -75,8 +77,13 @@ def derive_required_controls(adrs: List[ADR]) -> Dict[str, List[str]]:
     Returns: control_id -> list of ADR IDs that require it
     """
     mapping: Dict[str, List[str]] = {}
+    print("in derive_required_controls adrs")
+    print(adrs)
     for adr in adrs:
+        print("adr")
+        print(adr)
         controls = (adr.governance.get("controls") or [])
+        print(controls)
         for cid in controls:
             mapping.setdefault(cid, []).append(adr.adr_id)
     return mapping
@@ -292,6 +299,7 @@ def llm_enhance_report(adrs: List[ADR], results: List[ControlResult]) -> Optiona
 
 def main():
     adrs = load_adrs("adr")
+    print("in main adrs")
     print(adrs)
     required_map = derive_required_controls(adrs)  # control_id -> [adr_id]
     print(required_map)
