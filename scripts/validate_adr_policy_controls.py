@@ -287,7 +287,7 @@ def llm_enhance_report(adrs: List[ADR], results: List[ControlResult]) -> Optiona
 # ----------------------------
 
 def main():
-    adrs = load_adrs("adrs")
+    adrs = load_adrs("adr")
     required_map = derive_required_controls(adrs)  # control_id -> [adr_id]
 
     # load all control defs
