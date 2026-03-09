@@ -54,6 +54,9 @@ def parse_adr(path: str) -> ADR:
     print("meta")
     print(meta)
     print("in parse_adr")
+    print(meta.get("adr_id"))
+    print(meta.get("title", ""))
+    print(meta.get("intent", {}))
     print(meta.get("governance", {}))
     return ADR(
         path=path,
