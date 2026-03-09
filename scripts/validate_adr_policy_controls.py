@@ -44,11 +44,16 @@ FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
 def parse_adr(path: str) -> ADR:
     print("in parse_adr")
+    print(ADR)
+    ptint(path)
     text = open(path, "r", encoding="utf-8").read()
+    print(text)
     m = FRONT_MATTER_RE.match(text)
+    print(m)
     if not m:
         raise ValueError(f"ADR missing YAML front matter: {path}")
     meta = yaml.safe_load(m.group(1)) or {}
+    print(meta)
     return ADR(
         path=path,
         adr_id=meta.get("adr_id") or os.path.basename(path).split("-")[0],
@@ -288,7 +293,9 @@ def llm_enhance_report(adrs: List[ADR], results: List[ControlResult]) -> Optiona
 
 def main():
     adrs = load_adrs("adr")
+    ptint(adrs)
     required_map = derive_required_controls(adrs)  # control_id -> [adr_id]
+    print(required_map)
 
     # load all control defs
     control_defs: List[ControlDef] = [load_control_def(cid) for cid in sorted(required_map.keys())]
