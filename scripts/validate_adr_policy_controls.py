@@ -58,6 +58,8 @@ def parse_adr(path: str) -> ADR:
     print(os.path.basename(path).split("-")[0])
     print(os.path.basename(path).split("-")[1])
     print(os.path.basename(path).split("-")[2])
+    print(os.path.basename(path).split(":")[0])
+    print(os.path.basename(path).split(":")[1])
     print(meta.get("title", ""))
     print(meta.get("intent", {}))
     print(meta.get("governance", {}))
