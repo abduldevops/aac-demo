@@ -45,7 +45,7 @@ FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 def parse_adr(path: str) -> ADR:
     print("in parse_adr")
     print(ADR)
-    ptint(path)
+    print(path)
     text = open(path, "r", encoding="utf-8").read()
     print(text)
     m = FRONT_MATTER_RE.match(text)
@@ -293,7 +293,7 @@ def llm_enhance_report(adrs: List[ADR], results: List[ControlResult]) -> Optiona
 
 def main():
     adrs = load_adrs("adr")
-    ptint(adrs)
+    print(adrs)
     required_map = derive_required_controls(adrs)  # control_id -> [adr_id]
     print(required_map)
 
