@@ -44,15 +44,14 @@ FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
 def parse_adr(path: str) -> ADR:
     print("in parse_adr")
-    print(ADR)
     print(path)
     text = open(path, "r", encoding="utf-8").read()
-    print(text)
     m = FRONT_MATTER_RE.match(text)
     print(m)
     if not m:
         raise ValueError(f"ADR missing YAML front matter: {path}")
     meta = yaml.safe_load(m.group(1)) or {}
+    print("meta")
     print(meta)
     return ADR(
         path=path,
