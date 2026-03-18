@@ -55,10 +55,6 @@ def parse_adr(path: str) -> ADR:
     print(meta)
     print("in parse_adr")
     print(meta.get("adr_id"))
-    print(os.path.basename(path).split("-")[0])
-    print(os.path.basename(path).split("-")[1])
-    print(os.path.basename(path).split("-")[2])
-    print(os.path.basename(path).split(":")[0])
     print(meta.get("title", ""))
     print(meta.get("intent", {}))
     print(meta.get("governance", {}))
@@ -85,10 +81,7 @@ def derive_required_controls(adrs: List[ADR]) -> Dict[str, List[str]]:
     """
     mapping: Dict[str, List[str]] = {}
     print("in derive_required_controls adrs")
-    print(adrs)
     for adr in adrs:
-        print("adr")
-        print(adr)
         controls = (adr.governance.get("controls") or [])
         print(controls)
         for cid in controls:
@@ -309,11 +302,13 @@ def main():
     print("in main adrs")
     print(adrs)
     required_map = derive_required_controls(adrs)  # control_id -> [adr_id]
+    print("in main required_map")
     print(required_map)
-
+    print(required_map.keys())
     # load all control defs
     control_defs: List[ControlDef] = [load_control_def(cid) for cid in sorted(required_map.keys())]
-
+    print("in main control_defs")
+    print(control_defs)
     # derive needed tool reports from controls
     tool_set = set()
     for c in control_defs:
@@ -322,6 +317,8 @@ def main():
             if tool:
                 tool_set.add(tool)
 
+    print("in main tool_set")
+    print(tool_set)
     # map evidence tools to pipeline tool bundles
     bundles = set()
     if any(t in tool_set for t in ["tfsec", "checkov", "conftest"]):
