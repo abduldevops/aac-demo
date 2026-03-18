@@ -7,10 +7,10 @@ intent:
   non_functionals: ["security", "compliance", "observability"]
 governance:
   policies:
-    - ARC-POLICY-101-control
+    - ARC-POLICY-101
   controls:
-    - INFRA-001-control
-    - INFRA-006-control
+    - INFRA-001
+    - INFRA-006
 evidence_expectations:
   terraform:
     - "infra/**"
