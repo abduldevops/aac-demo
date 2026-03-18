@@ -1,9 +1,10 @@
 ---
-id: ADR-005
+adr_id: ADR-005
 title: Runtime Environment on AWS Fargate
 status: Accepted
-date: 2025-11-03
-context: Direct Debit Mandate Update Microservice
+intent:
+  summary: "Deploy the service on ECS Fargate using Terraform with policy-gated IaC."
+  non_functionals: ["security", "compliance", "observability"]
 governance:
   policies:
     - ARC-POLICY-101-control
