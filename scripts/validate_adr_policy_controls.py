@@ -95,7 +95,9 @@ def derive_required_controls(adrs: List[ADR]) -> Dict[str, List[str]]:
 
 def load_control_def(control_id: str, controls_dir="controls") -> ControlDef:
     folder = os.path.join(controls_dir, f"{control_id}-control")
+    print("in load_control_def")
     path = os.path.join(folder, "control.yaml")
+    print(path)
     if not os.path.exists(path):
         raise FileNotFoundError(f"Missing control definition for {control_id}: {path}")
     doc = yaml.safe_load(open(path, "r", encoding="utf-8")) or {}
