@@ -1,0 +1,14 @@
+id: INFRA-006
+title: Terraform plans must pass tfsec checks with no HIGH/Critical issues
+description: Ensure all Terraform plans are scanned and pass tfsec checks with no
+  high or critical issues.
+policy: policies/infrastructure/INFRA-006-tfsec-scan.rego
+input_source: infra_controls/INFRA-006/input/tfsec_results.json
+severity: high
+enforcement: hard
+stage: plan
+tags:
+- infrastructure
+- tfsec
+- terraform
+- security
