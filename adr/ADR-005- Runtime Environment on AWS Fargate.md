@@ -4,11 +4,17 @@ title: Runtime Environment on AWS Fargate
 status: Accepted
 date: 2025-11-03
 context: Direct Debit Mandate Update Microservice
-linkedPolicies:
-  - ARC-POLICY-101-control
-linkedControls:
-  - INFRA-001-control
-  - INFRA-006-control
+governance:
+  policies:
+    - ARC-POLICY-101-control
+  controls:
+    - INFRA-001-control
+    - INFRA-006-control
+evidence_expectations:
+  terraform:
+    - "infra/**"
+  java:
+    - "microservice/**"
 tags: [aws, fargate, deployment, containerization, compliance, directdebit]
 supersedes: null
 ---
