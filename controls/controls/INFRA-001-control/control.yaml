@@ -1,0 +1,15 @@
+id: INFRA-001
+title: Fargate tasks must use latest approved image tag (e.g., `:stable`)
+description: Ensure ECS tasks do not use mutable or unapproved image tags like `:latest`
+  or `:dev`.
+policy: policies/infrastructure/INFRA-001-fargate-tag.rego
+input_source: infra_controls/INFRA-001/input/terraform.json
+severity: high
+enforcement: hard
+stage: deploy
+tags:
+- infrastructure
+- ecs
+- fargate
+- container
+- security
